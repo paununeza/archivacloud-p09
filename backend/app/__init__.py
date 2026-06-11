@@ -1,0 +1,1 @@
+# Archivo vacío - solo marca la carpeta como paquete
