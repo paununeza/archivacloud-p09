@@ -21,10 +21,10 @@ async def get_presigned_url(request: PresignedUrlRequest):
         )
         
         return PresignedUrlResponse(
-            presigned_url=result['presignedUrl'],
+            presigned_url=result['presigned_url'],
             key=result['key'],
-            expires_in=result['expiresIn'],
-            message=f"URL válida por {result['expiresIn'] // 60} minutos."
+            expires_in=result['expires_in'],
+            message=f"URL válida por {result['expires_in'] // 60} minutos."
         )
     except ValueError as e:
         # Error de validación (nombre o tipo de archivo no permitido)

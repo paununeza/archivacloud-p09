@@ -27,7 +27,7 @@ class S3Service:
                 ExpiresIn=self.ttl
             )
             return {
-                "presignedUrl": presigned_url,
+                "presigned_url": presigned_url,
                 "key": key,
                 "expires_in": self.ttl
             }
