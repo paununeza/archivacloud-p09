@@ -1,0 +1,168 @@
+/* Estilo 8-bit / Pixel Art */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+body {
+    background: #000000;
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+    font-size: 12px;
+    color: #00ff00;
+    padding: 20px;
+}
+
+/* Ventana estilo retro */
+.pixel-window {
+    background: #000000;
+    border: 4px solid #00ff00;
+    box-shadow: 4px 4px 0px 0px #00ff00;
+    margin: 20px 0;
+    padding: 16px;
+}
+
+.pixel-window-header {
+    border-bottom: 2px solid #00ff00;
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+/* Botones pixel art */
+.pixel-button {
+    background: #000000;
+    border: 2px solid #00ff00;
+    color: #00ff00;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    padding: 8px 16px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.1s ease;
+}
+
+.pixel-button:hover {
+    background: #00ff00;
+    color: #000000;
+    box-shadow: 2px 2px 0px 0px #00ff00;
+}
+
+.pixel-button-danger {
+    border-color: #ff0000;
+    color: #ff0000;
+}
+
+.pixel-button-danger:hover {
+    background: #ff0000;
+    color: #000000;
+    box-shadow: 2px 2px 0px 0px #ff0000;
+}
+
+/* Barra de progreso pixelada */
+.pixel-progress {
+    width: 100%;
+    height: 24px;
+    background: #000000;
+    border: 2px solid #00ff00;
+    margin: 10px 0;
+}
+
+.pixel-progress-fill {
+    background: #00ff00;
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s steps(10);
+}
+
+/* Mensajes de error */
+.pixel-error {
+    border: 2px solid #ff0000;
+    color: #ff0000;
+    padding: 12px;
+    margin: 10px 0;
+    background: #000000;
+    font-family: monospace;
+}
+
+.pixel-error::before {
+    content: "⚠ ERROR ⚠ ";
+    font-weight: bold;
+}
+
+.pixel-success {
+    border: 2px solid #00ff00;
+    color: #00ff00;
+    padding: 12px;
+    margin: 10px 0;
+}
+
+.pixel-success::before {
+    content: "✓ ";
+}
+
+/* Tabla estilo terminal */
+.pixel-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10px;
+}
+
+.pixel-table th {
+    border-bottom: 2px solid #00ff00;
+    padding: 8px;
+    text-align: left;
+    color: #00ff00;
+}
+
+.pixel-table td {
+    border-bottom: 1px solid #00ff00;
+    padding: 8px;
+    color: #cccccc;
+}
+
+.pixel-table tr:hover {
+    background: #003300;
+    color: #00ff00;
+}
+
+/* ASCII/glitch decorations */
+.pixel-decoration {
+    color: #00ff00;
+    font-size: 8px;
+    white-space: pre;
+    margin: 10px 0;
+}
+
+.pixel-blink {
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Scanline effect */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 255, 0, 0.03) 0px,
+        rgba(0, 255, 0, 0.03) 2px,
+        transparent 2px,
+        transparent 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+}
