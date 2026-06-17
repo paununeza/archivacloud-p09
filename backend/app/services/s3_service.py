@@ -15,7 +15,7 @@ class S3Service:
         self.ttl = settings.presigned_url_ttl
     
     def generate_presigned_url(self, key: str, content_type: str) -> dict:
-        """Genera una URL pre-firmada para subir un archivo a S3 + TTL (feature extra)"""
+        """Genera una URL pre-firmada para subir un archivo a S3 + TTL """
         try:
             presigned_url = self.client.generate_presigned_url(
                 'put_object',
@@ -48,3 +48,35 @@ class S3Service:
             'svg': 'image/svg+xml'
         }
         return content_types.get(extension.lower(), 'application/octet-stream')
+    
+    def list_files(self, prefix: str = "uploads/") -> list:
+        """Lista todos los archivos en el bucket bajo el prefijo"""
+        try:
+            response = self.client.list_objects_v2(
+                Bucket=self.bucket,
+                Prefix=prefix
+            )
+            
+            files = []
+            if 'Contents' in response:
+                for obj in response['Contents']:
+                    files.append({
+                        'key': obj['Key'],
+                        'size': obj['Size'],
+                        'last_modified': obj['LastModified'].isoformat(),
+                        'filename': obj['Key'].split('/')[-1]  # Nombre del archivo
+                    })
+            return files
+        except ClientError as e:
+            raise Exception(f"Error listando archivos: {str(e)}")
+        
+    def delete_file(self, key: str) -> bool:
+        """Elimina un archivo del bucket"""
+        try:
+            self.client.delete_object(
+                Bucket=self.bucket,
+                Key=key
+            )
+            return True
+        except ClientError as e:
+            raise Exception(f"Error eliminando archivo: {str(e)}")

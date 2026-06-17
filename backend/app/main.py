@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from .routes import upload_router
+from .routes import upload_router, files_router
 from .config import settings
 
 #Aplicacion FastAPI
@@ -25,6 +25,7 @@ app.add_middleware(
 
 # Incluir routers
 app.include_router(upload_router)
+app.include_router(files_router)
 
 # Endpoint health check
 @app.get("/healthz", tags=["health"])
