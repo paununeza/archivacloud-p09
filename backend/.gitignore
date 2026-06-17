@@ -1,3 +1,7 @@
+# ================================
+# BACKEND (FastAPI)
+# ================================
+
 # Python
 __pycache__/
 *.py[cod]
@@ -35,7 +39,50 @@ build/
 dist/
 *.egg-info/
 
+# Tool caches
+.mypy_cache/
+.ruff_cache/
+.tox/
+
 # OS generated files
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Editor temporary files
+*~
+*.tmp
+*.bak
+*.orig
+
+# ================================
+# FRONTEND (React + Vite)
+# ================================
+
+# Dependencies
+frontend/node_modules/
+frontend/.pnp/
+frontend/.pnp.js
+
+# Build outputs
+frontend/dist/
+frontend/build/
+
+# Environment variables
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+
+# Cache
+frontend/.vite/
+frontend/.cache/
+
+# Logs
+frontend/*.log
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Optional
+frontend/.eslintcache
+frontend/*.tsbuildinfo
