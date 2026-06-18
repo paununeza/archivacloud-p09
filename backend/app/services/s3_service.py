@@ -64,8 +64,11 @@ class S3Service:
                         'key': obj['Key'],
                         'size': obj['Size'],
                         'last_modified': obj['LastModified'].isoformat(),
-                        'filename': obj['Key'].split('/')[-1]  # Nombre del archivo
+                        'filename': obj['Key'].split('/')[-1]
                     })
+
+                files.sort(key=lambda x: x['last_modified'], reverse=True)
+                
             return files
         except ClientError as e:
             raise Exception(f"Error listando archivos: {str(e)}")
@@ -83,21 +86,27 @@ class S3Service:
         
     # backend/app/services/s3_service.py
 
-def get_download_url(self, key: str) -> dict:
-    """Genera presigned URL específica para DESCARGAR (GET)"""
-    try:
-        presigned_url = self.client.generate_presigned_url(
-            'get_object',  # ← CAMBIAR a get_object
-            Params={
-                'Bucket': self.bucket,
-                'Key': key
-            },
-            ExpiresIn=self.ttl
-        )
-        return {
-            'download_url': presigned_url,
-            'key': key,
-            'expires_in': self.ttl
-        }
-    except ClientError as e:
-        raise Exception(f"Error generando URL de descarga: {str(e)}")
+    def generate_download_url(self, key: str) -> dict:
+            """Genera presigned URL para DESCARGAR (GET)"""
+            try:
+                presigned_url = self.client.generate_presigned_url(
+                    'get_object',  # ← CAMBIO IMPORTANTE
+                    Params={
+                        'Bucket': self.bucket,
+                        'Key': key
+                    },
+                    ExpiresIn=self.ttl
+                )
+                return {
+                    'download_url': presigned_url,
+                    'key': key,
+                    'expires_in': self.ttl
+                }
+            except ClientError as e:
+                error_code = e.response['Error']['Code']
+                if error_code == 'AccessDenied':
+                    raise Exception("No hay permisos para generar la URL de descarga")
+                elif error_code == 'NoSuchKey':
+                    raise Exception(f"El archivo {key} no existe")
+                else:
+                    raise Exception(f"Error generando URL: {str(e)}")

@@ -12,12 +12,16 @@ export const getPresignedUrl = async (fileName, fileType) => {
     return response.data;
 };
 
-export const uploadToS3 = async (url, file) => {
+export const uploadToS3 = async (url, file, onProgress) => {
     return await axios.put(url, file, {
-        headers: { 'Content-Type': file.type },
+        headers: { 
+            'Content-Type': file.type 
+        },
         onUploadProgress: (progressEvent) => {
-            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-            return percentCompleted;
+            if (onProgress) {
+                const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                onProgress(percentCompleted);
+            }
         }
     });
 };

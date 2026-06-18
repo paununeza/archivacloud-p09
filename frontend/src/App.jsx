@@ -111,7 +111,7 @@ function App() {
 
 
     // ASCII decoration
-    const asciiArt = `
+     const asciiArt = `
 ┌─────────────────────────────────────┐
 │  ARCHIVACLOUD.SYS    v1.0           │
 ├─────────────────────────────────────┤
@@ -122,8 +122,6 @@ function App() {
 
     return (
         <div>
-            <pre className="pixel-decoration">{asciiArt}</pre>
-
             <div className="pixel-window">
                 <div className="pixel-window-header">
                     PORTAL DE CARGA
@@ -214,6 +212,8 @@ function App() {
                 <div>TAMAÑO MAX: 6 MB</div>
                 <div>ESTADO: <span className="pixel-blink">ONLINE</span></div>
             </div>
+
+            <pre className="pixel-decoration">{asciiArt}</pre>
             
             {showModal && (
                 <PixelModal
