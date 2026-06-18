@@ -22,7 +22,7 @@ function App() {
             const data = await listFiles();
             setFiles(data.files || []);
         } catch (err) {
-            setError('FAILED TO LOAD FILE LIST');
+            setError('NO SE PUDO CARGAR LA LISTA DE ARCHIVOS');
         }
     };
 
@@ -31,12 +31,12 @@ function App() {
         if (!file) return;
 
         if (!ALLOWED_TYPES.includes(file.type)) {
-            setError(`FILE TYPE NOT ALLOWED.\nONLY PNG AND SVG.\nRECEIVED: ${file.type}`);
+            setError(`TIPO DE ARCHIVO NO PERMITIDO.\nSOLO PNG Y SVG.\nRECIBIDO: ${file.type}`);
             return;
         }
 
         if (file.size > MAX_SIZE) {
-            setError(`MAX SIZE EXCEEDED.\nLIMIT: 6MB\nFILE: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
+            setError(`TAMAÑO MAXIMO EXCEDIDO.\nLIMITE: 6MB\nARCHIVO: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
             return;
         }
 
@@ -53,10 +53,10 @@ function App() {
                 setProgress(percent);
             });
             
-            setMessage(`${file.name} UPLOADED SUCCESSFULLY`);
+            setMessage(`${file.name} CARGA EXITOSA`);
             await loadFiles();
         } catch (err) {
-            setError(`UPLOAD FAILED: ${err.message || 'UNKNOWN ERROR'}`);
+            setError(`ERROR AL CARGAR EL ARCHIVO: ${err.message || 'ERROR DESCONOCIDO'}`);
         } finally {
             setUploading(false);
             setUploadingFile('');
@@ -65,14 +65,14 @@ function App() {
     };
 
     const handleDelete = async (key, filename) => {
-        const confirm = window.confirm(`DELETE ${filename}?\nTHIS ACTION IS IRREVERSIBLE.`);
+        const confirm = window.confirm(`ELIMINAR ${filename}?\nLA ACCION ES IRREVERSIBLE`);
         if (confirm) {
             try {
                 await deleteFile(key);
-                setMessage(`${filename} DELETED`);
+                setMessage(`${filename} ELIMINADO`);
                 await loadFiles();
             } catch (err) {
-                setError('DELETE FAILED');
+                setError('ERROR AL ELIMINAR EL ARCHIVO');
             }
         }
     };
@@ -81,9 +81,9 @@ function App() {
         try {
             const response = await getDownloadUrl(key);
             window.open(response.download_url, '_blank');
-            setMessage(`📥 DESCARGANDO: ${filename}`);
+            setMessage(`DESCARGANDO: ${filename}`);
         } catch (err) {
-            setError('DOWNLOAD FAILED: Could not generate download URL');
+            setError('DESCARGA FALLIDA: No se pudo obtener URL de descarga');
         }
     };
 
@@ -92,7 +92,6 @@ function App() {
 ┌─────────────────────────────────────┐
 │  ARCHIVACLOUD.SYS    v1.0           │
 ├─────────────────────────────────────┤
-│  PORTAL DE CARGA A S3               │
 │  REGION: us-east-1                  │
 │  BUCKET: archivacloud-p09-pna       │
 └─────────────────────────────────────┘
@@ -104,7 +103,7 @@ function App() {
 
             <div className="pixel-window">
                 <div className="pixel-window-header">
-                    ⚡ UPLOAD TERMINAL [{uploading ? 'BUSY' : 'READY'}]
+                    PORTAL DE CARGA
                 </div>
                 
                 <input 
@@ -116,17 +115,17 @@ function App() {
                     id="file-input"
                 />
                 <label htmlFor="file-input" className="pixel-button">
-                    📁 SELECT FILE
+                    SELECCIONAR ARCHIVO
                 </label>
 
                 {uploading && (
                     <div style={{ marginTop: '16px' }}>
-                        <div>DOWNLOADING: {uploadingFile}</div>
+                        <div>DESCARGANDO: {uploadingFile}</div>
                         <div className="pixel-progress">
                             <div className="pixel-progress-fill" style={{ width: `${progress}%` }}></div>
                         </div>
-                        <div>{progress}% COMPLETE</div>
-                        <div className="pixel-blink">PROCESSING...</div>
+                        <div>{progress}% COMPLETADO</div>
+                        <div className="pixel-blink">PROCESANDO...</div>
                     </div>
                 )}
             </div>
@@ -147,19 +146,19 @@ function App() {
 
             <div className="pixel-window">
                 <div className="pixel-window-header">
-                    FILE INDEX [{files.length} ENTRIES]
+                    INDICE DE ARCHIVOS [{files.length} REGISTROS]
                 </div>
                 
                 {files.length === 0 ? (
-                    <div>NO FILES FOUND IN S3 BUCKET</div>
+                    <div>NO SE ENCONTRARON ARCHIVOS EN S3 BUCKET</div>
                 ) : (
                     <table className="pixel-table">
                         <thead>
                             <tr>
-                                <th>FILENAME</th>
-                                <th>SIZE</th>
-                                <th>DATE</th>
-                                <th>ACTION</th>
+                                <th>NOMBRE</th>
+                                <th>TAMAÑO</th>
+                                <th>FECHA</th>
+                                <th>ACCION</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -174,14 +173,14 @@ function App() {
                                             style={{ fontSize: '8px', marginRight: '4px' }}
                                             onClick={() => handleDownload(file.key, file.filename)}
                                         >
-                                            📥 GET
+                                            GET
                                         </button>
                                         <button 
                                             className="pixel-button pixel-button-danger" 
                                             style={{ fontSize: '8px' }}
                                             onClick={() => handleDelete(file.key, file.filename)}
                                         >
-                                            🗑️ DEL
+                                            DEL
                                         </button>
                                     </td>
                                 </tr>
@@ -195,10 +194,10 @@ function App() {
                 <div className="pixel-window-header">
                     SYSTEM INFO
                 </div>
-                <div>FEATURE EXTRA: PRESIGNED URL TTL = 60 MIN</div>
-                <div>ALLOWED TYPES: PNG / SVG</div>
-                <div>MAX SIZE: 6 MB</div>
-                <div>STATUS: <span className="pixel-blink">ONLINE</span></div>
+                <div>FEATURE EXTRA: ENLACE TEMPORAL DESCARGA TTL = 60 MIN</div>
+                <div>PERMITIDO: PNG / SVG</div>
+                <div>TAMAÑO MAX: 6 MB</div>
+                <div>ESTADO: <span className="pixel-blink">ONLINE</span></div>
             </div>
         </div>
     );
