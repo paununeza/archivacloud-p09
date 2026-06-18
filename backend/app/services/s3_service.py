@@ -80,3 +80,24 @@ class S3Service:
             return True
         except ClientError as e:
             raise Exception(f"Error eliminando archivo: {str(e)}")
+        
+    # backend/app/services/s3_service.py
+
+def get_download_url(self, key: str) -> dict:
+    """Genera presigned URL específica para DESCARGAR (GET)"""
+    try:
+        presigned_url = self.client.generate_presigned_url(
+            'get_object',  # ← CAMBIAR a get_object
+            Params={
+                'Bucket': self.bucket,
+                'Key': key
+            },
+            ExpiresIn=self.ttl
+        )
+        return {
+            'download_url': presigned_url,
+            'key': key,
+            'expires_in': self.ttl
+        }
+    except ClientError as e:
+        raise Exception(f"Error generando URL de descarga: {str(e)}")

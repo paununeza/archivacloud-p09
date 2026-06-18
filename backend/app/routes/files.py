@@ -29,3 +29,20 @@ async def delete_file(key: str):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error eliminando archivo"
         )
+    
+@router.get('/download/{key:path}')
+async def get_download_url(key: str):
+    """Genera una presigned URL para descargar un archivo"""
+    try:
+        result = s3_service.get_download_url(key)
+        return {
+            'download_url': result['download_url'],
+            'key': result['key'],
+            'expires_in': result['expires_in']
+        }
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error generando URL de descarga"
+        )

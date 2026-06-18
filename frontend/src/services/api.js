@@ -31,3 +31,8 @@ export const deleteFile = async (key) => {
     const response = await api.delete(`/files/${encodeURIComponent(key)}`);
     return response.data;
 };
+
+export const getDownloadUrl = async (key) => {
+    const response = await api.get(`/files/download/${encodeURIComponent(key)}`);
+    return response.data;
+};

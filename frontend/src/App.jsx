@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getPresignedUrl, uploadToS3, listFiles, deleteFile } from './services/api';
+import { getPresignedUrl, uploadToS3, listFiles, deleteFile, getDownloadUrl } from './services/api';
 import './styles/pixelart.css';
 
 function App() {
@@ -79,10 +79,11 @@ function App() {
 
     const handleDownload = async (key, filename) => {
         try {
-            const response = await getPresignedUrl(filename, 'image/png');
-            window.open(response.presigned_url, '_blank');
+            const response = await getDownloadUrl(key);
+            window.open(response.download_url, '_blank');
+            setMessage(`📥 DESCARGANDO: ${filename}`);
         } catch (err) {
-            setError('DOWNLOAD FAILED');
+            setError('DOWNLOAD FAILED: Could not generate download URL');
         }
     };
 
