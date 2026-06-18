@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getPresignedUrl, uploadToS3, listFiles, deleteFile, getDownloadUrl } from './services/api';
+import PixelModal from './components/PixelModal';
 import './styles/pixelart.css';
 
 function App() {
@@ -7,8 +8,11 @@ function App() {
     const [uploading, setUploading] = useState(false);
     const [progress, setProgress] = useState(0);
     const [message, setMessage] = useState('');
-    const [error, setError] = useState('');
     const [uploadingFile, setUploadingFile] = useState('');
+
+    const [showModal, setShowModal] = useState(false);
+    const [modalTitle, setModalTitle] = useState('');
+    const [modalMessage, setModalMessage] = useState('');
 
     const MAX_SIZE = 6 * 1024 * 1024;
     const ALLOWED_TYPES = ['image/png', 'image/svg+xml'];
@@ -22,27 +26,45 @@ function App() {
             const data = await listFiles();
             setFiles(data.files || []);
         } catch (err) {
-            setError('NO SE PUDO CARGAR LA LISTA DE ARCHIVOS');
+            showError('ERROR', 'NO SE PUDO CARGAR LA LISTA DE ARCHIVOS');
         }
     };
+
+    const showError = (title, message) => {
+        setShowModal(false); // Forzar cierre
+        setTimeout(() => {
+            setModalTitle(title);
+            setModalMessage(message);
+            setShowModal(true);
+        }, 50);
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+        setTimeout(() => {
+            setModalTitle('');
+            setModalMessage('');
+        }, 100);
+    };
+
 
     const handleUpload = async (event) => {
         const file = event.target.files[0];
         if (!file) return;
 
         if (!ALLOWED_TYPES.includes(file.type)) {
-            setError(`TIPO DE ARCHIVO NO PERMITIDO.\nSOLO PNG Y SVG.\nRECIBIDO: ${file.type}`);
+            showError('ERROR', `TIPO DE ARCHIVO NO PERMITIDO.\nSOLO PNG Y SVG.\nRECIBIDO: ${file.type}`);
             return;
         }
 
         if (file.size > MAX_SIZE) {
-            setError(`TAMAÑO MAXIMO EXCEDIDO.\nLIMITE: 6MB\nARCHIVO: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
+            showError('ERROR', `TAMAÑO MAXIMO EXCEDIDO.\nLIMITE: 6MB\nARCHIVO: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
             return;
         }
 
         setUploading(true);
         setProgress(0);
-        setError('');
+        /*setError('');*/
         setMessage('');
         setUploadingFile(file.name);
 
@@ -56,7 +78,7 @@ function App() {
             setMessage(`${file.name} CARGA EXITOSA`);
             await loadFiles();
         } catch (err) {
-            setError(`ERROR AL CARGAR EL ARCHIVO: ${err.message || 'ERROR DESCONOCIDO'}`);
+            showError('ERROR', `ERROR AL CARGAR EL ARCHIVO: ${err.message || 'ERROR DESCONOCIDO'}`);
         } finally {
             setUploading(false);
             setUploadingFile('');
@@ -72,7 +94,7 @@ function App() {
                 setMessage(`${filename} ELIMINADO`);
                 await loadFiles();
             } catch (err) {
-                setError('ERROR AL ELIMINAR EL ARCHIVO');
+                 showError('ERROR AL ELIMINAR', 'NO SE PUDO ELIMINAR EL ARCHIVO');
             }
         }
     };
@@ -83,9 +105,10 @@ function App() {
             window.open(response.download_url, '_blank');
             setMessage(`DESCARGANDO: ${filename}`);
         } catch (err) {
-            setError('DESCARGA FALLIDA: No se pudo obtener URL de descarga');
+            showError('DESCARGA FALLIDA', 'No se pudo obtener URL de descarga');
         }
     };
+
 
     // ASCII decoration
     const asciiArt = `
@@ -133,14 +156,6 @@ function App() {
             {message && (
                 <div className="pixel-success">
                     {message}
-                </div>
-            )}
-
-            {error && (
-                <div className="pixel-error">
-                    {error.split('\n').map((line, i) => (
-                        <div key={i}>{line}</div>
-                    ))}
                 </div>
             )}
 
@@ -199,6 +214,15 @@ function App() {
                 <div>TAMAÑO MAX: 6 MB</div>
                 <div>ESTADO: <span className="pixel-blink">ONLINE</span></div>
             </div>
+            
+            {showModal && (
+                <PixelModal
+                    title={modalTitle}
+                    message={modalMessage}
+                    onClose={closeModal}
+                />
+            )}
+
         </div>
     );
 }
