@@ -15,7 +15,7 @@ class S3Service:
         self.ttl = settings.presigned_url_ttl
     
     def generate_presigned_url(self, key: str, content_type: str) -> dict:
-        """Genera una URL pre-firmada para subir un archivo a S3 + TTL """
+        # Genera una URL pre-firmada para subir un archivo a S3 + TTL
         try:
             presigned_url = self.client.generate_presigned_url(
                 'put_object',
@@ -42,7 +42,7 @@ class S3Service:
                 raise Exception(f"Error generando URL: {str(e)}")
     
     def get_content_type_for_extension(self, extension: str) -> str:
-        """Obtiene Content-Type según extensión"""
+        # Obtiene Content-Type según extensión
         content_types = {
             'png': 'image/png',
             'svg': 'image/svg+xml'
@@ -50,7 +50,7 @@ class S3Service:
         return content_types.get(extension.lower(), 'application/octet-stream')
     
     def list_files(self, prefix: str = "uploads/") -> list:
-        """Lista todos los archivos en el bucket bajo el prefijo"""
+        # Lista todos los archivos en el bucket bajo el prefijo
         try:
             response = self.client.list_objects_v2(
                 Bucket=self.bucket,
@@ -74,7 +74,7 @@ class S3Service:
             raise Exception(f"Error listando archivos: {str(e)}")
         
     def delete_file(self, key: str) -> bool:
-        """Elimina un archivo del bucket"""
+        # Elimina un archivo del bucket
         try:
             self.client.delete_object(
                 Bucket=self.bucket,
@@ -84,13 +84,12 @@ class S3Service:
         except ClientError as e:
             raise Exception(f"Error eliminando archivo: {str(e)}")
         
-    # backend/app/services/s3_service.py
 
     def generate_download_url(self, key: str) -> dict:
-            """Genera presigned URL para DESCARGAR (GET)"""
+            # Genera presigned URL para DESCARGAR (GET)
             try:
                 presigned_url = self.client.generate_presigned_url(
-                    'get_object',  # ← CAMBIO IMPORTANTE
+                    'get_object',
                     Params={
                         'Bucket': self.bucket,
                         'Key': key
