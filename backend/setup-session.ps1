@@ -12,14 +12,9 @@ $env:AWS_SECRET_ACCESS_KEY = $SecretKey
 $env:AWS_SESSION_TOKEN = $SessionToken
 $env:AWS_REGION = "us-east-1"
 
-Write-Host "✅ Credenciales configuradas" -ForegroundColor Green
+Write-Host "Credenciales configuradas" -ForegroundColor Green
 
-# 3. Verificar credenciales (opcional)
-aws sts get-caller-identity
-
-
-# 4. Ir a backend e iniciar
-#cd backend
+# 4. Iniciar la aplicación
 #if (-not (Test-Path "venv")) {
 #    python -m venv venv
 #}

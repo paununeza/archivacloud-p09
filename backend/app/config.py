@@ -2,11 +2,11 @@ from pydantic_settings import BaseSettings
 from typing import List
 
 class Settings(BaseSettings):
-    # AWS Configuration
+    # AWS Configuracion
     aws_region: str = "us-east-1"
     s3_bucket_name: str = "archivacloud-p09-pna"
     
-    # Application Settings
+    # Configuracion de la Aplicacion
     presigned_url_ttl: int = 3600  # 60 minutos (feature extra)
     allowed_extensions: List[str] = ["png", "svg"]
     max_file_size_mb: int = 6
