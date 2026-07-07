@@ -5,6 +5,10 @@ class Settings(BaseSettings):
     # AWS Configuracion
     aws_region: str = "us-east-1"
     s3_bucket_name: str = "archivacloud-p09-pna"
+
+    dynamodb_table_name: str = "database_dynamo"
+    dynamodb_partition_key: str = "id_tabla"
+    dynamodb_sort_key: str = "nombre_proyecto"
     
     # Configuracion de la Aplicacion
     presigned_url_ttl: int = 3600  # 60 minutos (feature extra)

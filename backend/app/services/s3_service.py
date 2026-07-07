@@ -2,6 +2,7 @@ import boto3
 from botocore.config import Config as BotoConfig
 from botocore.exceptions import ClientError
 from ..config import settings
+from .dynamodb_service import DynamoDBService
 
 class S3Service:
     def __init__(self):
@@ -13,6 +14,7 @@ class S3Service:
         )
         self.bucket = settings.s3_bucket_name
         self.ttl = settings.presigned_url_ttl
+        self.dynamodb = DynamoDBService()
     
     def generate_presigned_url(self, key: str, content_type: str) -> dict:
         # Genera una URL pre-firmada para subir un archivo a S3 + TTL
@@ -26,6 +28,13 @@ class S3Service:
                 },
                 ExpiresIn=self.ttl
             )
+
+            self.dynamodb.save_upload_record(
+                key=key,
+                presigned_url=presigned_url,
+                expires_in=self.ttl
+            )
+
             return {
                 "presigned_url": presigned_url,
                 "key": key,
@@ -74,12 +83,15 @@ class S3Service:
             raise Exception(f"Error listando archivos: {str(e)}")
         
     def delete_file(self, key: str) -> bool:
-        # Elimina un archivo del bucket
+        # Elimina un archivo del bucket y su registro en DynamoDB
         try:
             self.client.delete_object(
                 Bucket=self.bucket,
                 Key=key
             )
+
+            self.dynamodb.delete_upload_record(key)
+
             return True
         except ClientError as e:
             raise Exception(f"Error eliminando archivo: {str(e)}")
